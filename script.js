@@ -12,51 +12,136 @@ function filterData(data, years, multiplier) {
     return data.filter(row => +row.years === years && +row.multiplier === multiplier);
 }
 
-function createCharts(filteredData) {
-    // Terminal Wealth Chart
-    const ctx1 = document.getElementById('terminalWealthChart').getContext('2d');
+function prepareTerminalWealthData(filteredData) {
+    return {
+        labels: filteredData.map((row, index) => {
+            const date = new Date(row.start_date);
+            return index % 10 === 0 ? date.getFullYear() : '';
+        }),
+        datasets: [
+            {
+                label: 'CPPI Terminal Wealth',
+                data: filteredData.map(row => +row.cppi_terminal_wealth),
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                tension: 0.4,
+                pointRadius: 0,
+                borderWidth: 1.2,
+            },
+            {
+                label: 'S&P 500 Terminal Wealth',
+                data: filteredData.map(row => +row.sp500_terminal_wealth),
+                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                tension: 0.4,
+                pointRadius: 0,
+                borderWidth: 1.2,
+            },
+            {
+                label: 'Initial Wealth',
+                data: filteredData.map(() => 100), // Fixed value of 100
+                borderColor: 'rgba(255, 255, 255, 0.5)', // Light color
+                backgroundColor: 'rgba(255, 255, 255, 0)', // No fill
+                tension: 0,
+                pointRadius: 0,
+                borderWidth: 1,
+                borderDash: [1, 2], // Dotted line
+            }
+        ]
+    };
+}
 
-    // Format dates and reduce frequency
-    const labels = filteredData.map((row, index) => {
-        const date = new Date(row.start_date);
-        return index % 10 === 0 ? date.getFullYear() : ''; // Show only every 10th year
-    });
+function prepareCAGRData(filteredData) {
+    return {
+        labels: filteredData.map((row, index) => {
+            const date = new Date(row.start_date);
+            return index % 10 === 0 ? date.getFullYear() : '';
+        }),
+        datasets: [
+            {
+                label: 'CPPI CAGR',
+                data: filteredData.map(row => +row.cppi_cagr * 100),
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                tension: 0.4,
+                pointRadius: 0,
+                borderWidth: 1.2,
+            },
+            {
+                label: 'S&P 500 CAGR',
+                data: filteredData.map(row => +row.sp500_cagr * 100),
+                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                tension: 0.4,
+                pointRadius: 0,
+                borderWidth: 1.2,
+            },
+            {
+                label: '0% Return', // Changed label
+                data: filteredData.map(() => 0), // Data now represents 0% return
+                borderColor: 'rgba(255, 255, 255, 0.5)', // Light color
+                backgroundColor: 'rgba(255, 255, 255, 0)', // No fill
+                tension: 0,
+                pointRadius: 0,
+                borderWidth: 1,
+                borderDash: [1, 2], // Dotted line
+            }
+        ]
+    };
+}
 
-    const terminalWealthChart = new Chart(ctx1, {
+function prepareVolatilityData(filteredData) {
+    return {
+        labels: filteredData.map((row, index) => {
+            const date = new Date(row.start_date);
+            return index % 10 === 0 ? date.getFullYear() : '';
+        }),
+        datasets: [
+            {
+                label: 'CPPI Volatility',
+                data: filteredData.map(row => +row.cppi_volatility * 100),
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                tension: 0.4,
+                pointRadius: 0,
+                borderWidth: 1.2,
+            },
+            {
+                label: 'S&P 500 Volatility',
+                data: filteredData.map(row => +row.sp500_volatility * 100),
+                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                tension: 0.4,
+                pointRadius: 0,
+                borderWidth: 1.2,
+            },
+            {
+                label: '', // Changed label
+                data: filteredData.map(() => 0), // Data now represents 0% return
+                borderColor: 'rgba(255, 255, 255, 0)', // Light color
+                backgroundColor: 'rgba(255, 255, 255, 0)', // No fill
+                tension: 0,
+                pointRadius: 0,
+                borderWidth: 0,
+                borderDash: [1, 2], // Dotted line
+            }
+        ]
+    };
+}
+
+async function initializeDashboard() {
+    const data = await fetchData();
+    const yearsSelect = document.getElementById('years');
+    const multiplierSelect = document.getElementById('multiplier');
+
+    const terminalWealthTab = document.getElementById('terminalWealthTab');
+    const cagrTab = document.getElementById('cagrTab');
+    const volatilityTab = document.getElementById('volatilityTab');
+
+    // Initialize the chart with Terminal Wealth data
+    let chart = new Chart(document.getElementById('chart').getContext('2d'), {
         type: 'line',
-        data: {
-            labels: labels, // Use formatted labels
-            datasets: [
-                {
-                    label: 'CPPI Terminal Wealth',
-                    data: filteredData.map(row => +row.cppi_terminal_wealth),
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    tension: 0.4,
-                    pointRadius: 0,
-                    borderWidth: 1.2, // Thinner line
-                },
-                {
-                    label: 'Buy-and-Hold Terminal Wealth',
-                    data: filteredData.map(row => +row.buy_and_hold_terminal_wealth),
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    tension: 0.4,
-                    pointRadius: 0,
-                    borderWidth: 1.2, // Thinner line
-                },
-                {
-                    label: 'Initial Wealth',
-                    data: filteredData.map(() => 100), // Fixed value of 100
-                    borderColor: 'rgba(255, 255, 255, 0.5)', // Light color
-                    backgroundColor: 'rgba(255, 255, 255, 0)', // No fill
-                    tension: 0,
-                    pointRadius: 0,
-                    borderWidth: 1,
-                    borderDash: [1, 2], // Dotted line
-                }
-            ],
-        },
+        data: prepareTerminalWealthData(filterData(data, +yearsSelect.value, +multiplierSelect.value)),
         options: {
             scales: {
                 x: {
@@ -66,14 +151,14 @@ function createCharts(filteredData) {
                     }
                 }
             },
-            plugins: { // Add this plugins block
+            plugins: {
                 legend: {
                     labels: {
                         useLineStyle: true,
                         boxWidth: 15
                     }
                 },
-                tooltip: {
+                tooltip: { // Enhanced tooltips
                     callbacks: {
                         label: function(context) {
                             let label = context.dataset.label || '';
@@ -81,13 +166,18 @@ function createCharts(filteredData) {
                                 label += ': ';
                             }
                             if (context.parsed.y !== null) {
-                                label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
+                                // Format values as percentages for CAGR and Volatility
+                                if (cagrTab.classList.contains('active') || volatilityTab.classList.contains('active')) {
+                                    label += context.parsed.y.toFixed(2) + '%';
+                                } else {
+                                    label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
+                                }
                             }
                             return label;
                         },
                         title: function(context) {
-                            const date = new Date(filteredData[context[0].dataIndex].start_date); // Access the original date
-                            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }); 
+                            const date = new Date(filterData(data, +yearsSelect.value, +multiplierSelect.value)[context[0].dataIndex].start_date);
+                            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
                         }
                     }
                 }
@@ -95,51 +185,41 @@ function createCharts(filteredData) {
         }
     });
 
-    return terminalWealthChart;
-}
-
-async function initializeDashboard() {
-    const data = await fetchData();
-    const yearsSelect = document.getElementById('years');
-    const multiplierSelect = document.getElementById('multiplier');
-    const fullscreenButton = document.getElementById('fullscreen-button');
-    const fullscreenChart = document.getElementById('fullscreen-chart');
-    const fullscreenChartCanvas = document.getElementById('fullscreen-chart-canvas');
-    const closeFullscreenButton = document.getElementById('close-fullscreen-button');
-
-    let terminalWealthChart = createCharts(filterData(data, +yearsSelect.value, +multiplierSelect.value)); // Initialize the chart
-
     function median(values) {
         if (values.length === 0) return 0;
-    
+
         values.sort((a, b) => a - b);
         const half = Math.floor(values.length / 2);
         if (values.length % 2) {
-            return   
-     values[half];
+            return values[half];
         } else {
             return (values[half - 1] + values[half]) / 2.0;
         }
     }
-    
+
     function updateCharts() {
         const years = +yearsSelect.value;
         const multiplier = +multiplierSelect.value;
         const filteredData = filterData(data, years, multiplier);
 
-        // Format dates and reduce frequency
-        const labels = filteredData.map((row, index) => {
-            const date = new Date(row.start_date);
-            return index % 10 === 0 ? date.getFullYear() : ''; // Show only every 10th year
-        });
+        let chartData;
+        if (terminalWealthTab.classList.contains('active')) {
+            chartData = prepareTerminalWealthData(filteredData);
+        } else if (cagrTab.classList.contains('active')) {
+            chartData = prepareCAGRData(filteredData);
+        } else if (volatilityTab.classList.contains('active')) {
+            chartData = prepareVolatilityData(filteredData);
+        }
 
         // Update the chart data
-        terminalWealthChart.data.labels = labels;
-        terminalWealthChart.data.datasets[0].data = filteredData.map(row => +row.cppi_terminal_wealth);
-        terminalWealthChart.data.datasets[1].data = filteredData.map(row => +row.sp500_terminal_wealth);
+        chart.data.labels = chartData.labels;
+        chartData.datasets.forEach((dataset, index) => {
+            chart.data.datasets[index].label = dataset.label; // Update the label
+            chart.data.datasets[index].data = dataset.data;
+        });
 
         // Trigger the update with animation
-        terminalWealthChart.update();
+        chart.update();
 
         // Calculate and update table data
         const cppiCAGR = median(filteredData.map(row => +row.cppi_cagr));
@@ -150,7 +230,7 @@ async function initializeDashboard() {
         const sp500Volatility = median(filteredData.map(row => +row.sp500_volatility));
         const cppiMaxDrawdown = Math.min(...filteredData.map(row => +row.cppi_max_drawdown));
         const sp500MaxDrawdown = Math.min(...filteredData.map(row => +row.sp500_max_drawdown));
-    
+
         document.getElementById('cppi-cagr').textContent = (cppiCAGR * 100).toFixed(2) + "%";
         document.getElementById('sp500-cagr').textContent = (sp500CAGR * 100).toFixed(2) + "%";
         document.getElementById('cppi-terminal-wealth').textContent = cppiTerminalWealth.toFixed(1);
@@ -164,13 +244,32 @@ async function initializeDashboard() {
         document.getElementById('cppi-cagr-stat').textContent = (cppiCAGR * 100).toFixed(2) + "%";
         document.getElementById('sp500-cagr-stat').textContent = (sp500CAGR * 100).toFixed(2) + "%";
         document.getElementById('cppi-volatility-stat').textContent = (cppiVolatility * 100).toFixed(2) + "%";
-        document.getElementById('sp500-volatility-stat').textContent = (sp500Volatility * 100).toFixed(2) + "%"; 
-
+        document.getElementById('sp500-volatility-stat').textContent = (sp500Volatility * 100).toFixed(2) + "%";
     }
 
     yearsSelect.addEventListener('change', updateCharts);
     multiplierSelect.addEventListener('change', updateCharts);
 
+    terminalWealthTab.addEventListener('click', () => {
+        terminalWealthTab.classList.add('active');
+        cagrTab.classList.remove('active');
+        volatilityTab.classList.remove('active');
+        updateCharts();
+    });
+
+    cagrTab.addEventListener('click', () => {
+        cagrTab.classList.add('active');
+        terminalWealthTab.classList.remove('active');
+        volatilityTab.classList.remove('active');
+        updateCharts();
+    });
+
+    volatilityTab.addEventListener('click', () => {
+        volatilityTab.classList.add('active');
+        terminalWealthTab.classList.remove('active');
+        cagrTab.classList.remove('active');
+        updateCharts();
+    });
 
     // Initial chart render
     updateCharts();

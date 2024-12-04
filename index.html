@@ -8,69 +8,80 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
-      body {
-        background-color: #121212;
-        color: #ffffff;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-      }
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
 
-      canvas {
-        background-color: #1e1e1e;
-        border-radius: 8px;
-        margin-top: 20px;
-      }
+        canvas {
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
 
-      /* Custom background color */
-      .bg-custom-dark {
-        background-color: #1a1a1a; /* Very dark background */
-      }
+        /* Custom background color */
+        .bg-custom-dark {
+            background-color: #1a1a1a; /* Very dark background */
+        }
 
-      .border-custom-dark {
-        border-color: #2a2a2a; /* Subtle border color */
-      }
+        .border-custom-dark {
+            border-color: #2a2a2a; /* Subtle border color */
+        }
 
-      .hover-custom-dark:hover {
-        background-color: #2a2a2a; /* Subtle hover effect */
-      }
+        .hover-custom-dark:hover {
+            background-color: #2a2a2a; /* Subtle hover effect */
+        }
 
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-      }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
 
-      th,
-      td {
-        border-bottom: 1px solid #2a2a2a;
-        padding: 8px;
-        text-align: left;
-      }
+        th,
+        td {
+            border-bottom: 1px solid #2a2a2a;
+            padding: 8px;
+            text-align: left;
+        }
 
-      th:first-child,
-      td:first-child {
-        border-left: none;
-      }
+        th:first-child,
+        td:first-child {
+            border-left: none;
+        }
 
-      th:last-child,
-      td:last-child {
-        border-right: none;
-      }
+        th:last-child,
+        td:last-child {
+            border-right: none;
+        }
 
-      /* Custom styles for select elements */
-      select {
-        background-color: #1a1a1a;
-        border: 1px solid #2a2a2a;
-        color: #ffffff;
-        padding: 8px;
-        border-radius: 4px;
-      }
+        /* Custom styles for select elements */
+        select {
+            background-color: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            color: #ffffff;
+            padding: 8px;
+            border-radius: 4px;
+        }
 
-      select:focus {
-        outline: none;
-        border-color: #4a4a4a;
-      }
+        select:focus {
+            outline: none;
+            border-color: #4a4a4a;
+        }
+
+        /* Custom styles for tabs */
+        .tabs .tab {
+            @apply px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-600 text-gray-300; 
+            border-bottom: 2px solid transparent; /* Add a transparent border initially */
+        }
+
+        .tabs .tab.active {
+            @apply bg-blue-500 text-white;
+            border-bottom-color: #4a4a4a; /* Add a visible border at the bottom when active */
+        }
     </style>
 </head>
 <body>
@@ -117,29 +128,16 @@
         </div>
 
         <div class="chart-container bg-custom-dark rounded-lg shadow-lg p-4">
-            <div class="stats-box grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-              <div class="stat-item">
-                <h2 class="text-xs font-semibold text-gray-300 mb-2">CPPI CAGR</h2>
-                <p class="text-4xl font-bold" id="cppi-cagr-stat">2.97%</p>
-              </div>
-              <div class="stat-item">
-                <h2 class="text-xs font-semibold text-gray-300 mb-2">S&P 500 CAGR</h2>
-                <p class="text-4xl font-bold" id="sp500-cagr-stat">9.29%</p>
-              </div>
-              <div class="stat-item">
-                <h2 class="text-xs font-semibold text-gray-300 mb-2">CPPI Volatility</h2>
-                <p class="text-4xl font-bold" id="cppi-volatility-stat">1.23%</p>
-              </div>
-              <div class="stat-item">
-                <h2 class="text-xs font-semibold text-gray-300 mb-2">S&P 500 Volatility</h2>
-                <p class="text-4xl font-bold" id="sp500-volatility-stat">13.88%</p>
-              </div>
-            </div>
-      
-            <div>
-              <canvas id="terminalWealthChart" class="w-full" width="400" height="200"></canvas>
-            </div>
+            <div class="tabs flex space-x-4 mb-4">
+              <button id="terminalWealthTab" class="tab active">Terminal Wealth</button>
+              <button id="cagrTab" class="tab">CAGR</button>
+              <button id="volatilityTab" class="tab">Volatility</button>
           </div>
+
+            <div>
+              <canvas id="chart" class="w-full" width="400" height="200"></canvas>
+            </div>
+        </div>
 
         <table id="metrics-table" class="w-full text-left bg-custom-dark rounded-lg overflow-hidden shadow-lg">
             <thead>
@@ -173,13 +171,13 @@
             </tbody>
         </table>
 
-        <div class="simulation-parameters-card mb-8 bg-custom-dark rounded-lg shadow-lg p-4 mt-8"> 
+        <div class="simulation-parameters-card mb-8 bg-custom-dark rounded-lg shadow-lg p-4 mt-8">
             <h2 class="text-xl font-semibold text-gray-300 mb-4">
                 Simulation Parameters
             </h2>
             <div id="simulation-parameters-card-content">
                 <p class="text-gray-400">The following parameters were used for the CPPI simulations:</p>
-                <table class="w-full text-left mt-4"> 
+                <table class="w-full text-left mt-4">
                     <tbody>
                         <tr class="hover-custom-dark">
                             <td class="px-6 py-4 border-b border-custom-dark">Rebalancing Frequency</td>
@@ -200,6 +198,5 @@
 
     </div>
 
-    <script src="script.js"></script>
-</body>
+    <script src="script.js"></script> </body>
 </html>
