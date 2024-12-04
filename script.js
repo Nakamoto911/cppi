@@ -72,6 +72,24 @@ function createCharts(filteredData) {
                         useLineStyle: true,
                         boxWidth: 15
                     }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
+                            }
+                            return label;
+                        },
+                        title: function(context) {
+                            const date = new Date(filteredData[context[0].dataIndex].start_date); // Access the original date
+                            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }); 
+                        }
+                    }
                 }
             }
         }
