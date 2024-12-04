@@ -1,0 +1,5 @@
+/.venv
+/backup Python
+/cppi_results.csv
+/cppi_results3.csv
+/cppisimulation.py

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPPI vs. Buy-and-Hold Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+      body {
+        background-color: #121212;
+        color: #ffffff;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+
+      canvas {
+        background-color: #1e1e1e;
+        border-radius: 8px;
+        margin-top: 20px;
+      }
+
+      /* Custom background color */
+      .bg-custom-dark {
+        background-color: #1a1a1a; /* Very dark background */
+      }
+
+      .border-custom-dark {
+        border-color: #2a2a2a; /* Subtle border color */
+      }
+
+      .hover-custom-dark:hover {
+        background-color: #2a2a2a; /* Subtle hover effect */
+      }
+
+      #fullscreen-chart {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #121212;
+        z-index: 100;
+        /* Ensure it's on top */
+        display: none;
+        /* Hidden by default */
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      th,
+      td {
+        border-bottom: 1px solid #2a2a2a;
+        padding: 8px;
+        text-align: left;
+      }
+
+      th:first-child,
+      td:first-child {
+        border-left: none;
+      }
+
+      th:last-child,
+      td:last-child {
+        border-right: none;
+      }
+
+      /* Custom styles for select elements */
+      select {
+        background-color: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        color: #ffffff;
+        padding: 8px;
+        border-radius: 4px;
+      }
+
+      select:focus {
+        outline: none;
+        border-color: #4a4a4a;
+      }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto p-6">
+        <div class="header text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-300">CPPI vs. Buy-and-Hold</h1>
+        </div>
+        <div class="filters flex flex-col md:flex-row justify-between gap-4 mb-8">
+            <div class="flex items-center">
+                <label for="years" class="block text-gray-400 mr-2">Investment Period (Years):</label>
+                <select id="years" class="text-white rounded-md px-4 py-2">
+                    <option value="1">1 Year</option>
+                    <option value="2">2 Years</option>
+                    <option value="3">3 Years</option>
+                    <option value="4">4 Years</option>
+                    <option value="5">5 Years</option>
+                    <option value="6">6 Years</option>
+                    <option value="7">7 Years</option>
+                    <option value="8">8 Years</option>
+                    <option value="9">9 Years</option>
+                    <option value="10">10 Years</option>
+                    <option value="11">11 Years</option>
+                    <option value="12">12 Years</option>
+                    <option value="13">13 Years</option>
+                    <option value="14">14 Years</option>
+                    <option value="15">15 Years</option>
+                    <option value="16">16 Years</option>
+                    <option value="17">17 Years</option>
+                    <option value="18">18 Years</option>
+                    <option value="19">19 Years</option>
+                    <option value="20">20 Years</option>
+                </select>
+            </div>
+            <div class="flex items-center">
+                <label for="multiplier" class="block text-gray-400 mr-2">CPPI Multiplier:</label>
+                <select id="multiplier" class="text-white rounded-md px-4 py-2">
+                    <option value="1">1x</option>
+                    <option value="2">2x</option>
+                    <option value="3">3x</option>
+                    <option value="4">4x</option>
+                    <option value="5">5x</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="chart-container bg-custom-dark rounded-lg shadow-lg p-4">
+            <div class="stats-box grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+              <div class="stat-item">
+                <h2 class="text-xs font-semibold text-gray-300 mb-2">CPPI CAGR</h2>
+                <p class="text-4xl font-bold" id="cppi-cagr-stat">2.97%</p>
+              </div>
+              <div class="stat-item">
+                <h2 class="text-xs font-semibold text-gray-300 mb-2">S&P 500 CAGR</h2>
+                <p class="text-4xl font-bold" id="sp500-cagr-stat">9.29%</p>
+              </div>
+              <div class="stat-item">
+                <h2 class="text-xs font-semibold text-gray-300 mb-2">CPPI Volatility</h2>
+                <p class="text-4xl font-bold" id="cppi-volatility-stat">1.23%</p>
+              </div>
+              <div class="stat-item">
+                <h2 class="text-xs font-semibold text-gray-300 mb-2">S&P 500 Volatility</h2>
+                <p class="text-4xl font-bold" id="sp500-volatility-stat">13.88%</p>
+              </div>
+            </div>
+      
+            <div>
+              <canvas id="terminalWealthChart" class="w-full" width="400" height="200"></canvas>
+            </div>
+          </div>
+
+        <table id="metrics-table" class="w-full text-left bg-custom-dark rounded-lg overflow-hidden shadow-lg">
+            <thead>
+                <tr>
+                    <th class="px-6 py-3 border-b border-custom-dark"></th>
+                    <th class="px-6 py-3 border-b border-custom-dark text-center">CPPI</th>
+                    <th class="px-6 py-3 border-b border-custom-dark text-center">S&P 500</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="hover-custom-dark">
+                    <td class="px-6 py-4 border-b border-custom-dark">CAGR (Median)</td>
+                    <td class="px-6 py-4 border-b border-custom-dark text-center" id="cppi-cagr">2.97%</td>
+                    <td class="px-6 py-4 border-b border-custom-dark text-center" id="sp500-cagr">9.29%</td>
+                </tr>
+                <tr class="hover-custom-dark">
+                    <td class="px-6 py-4 border-b border-custom-dark">Terminal Wealth (Median)</td>
+                    <td class="px-6 py-4 border-b border-custom-dark text-center" id="cppi-terminal-wealth">103.0</td>
+                    <td class="px-6 py-4 border-b border-custom-dark text-center" id="sp500-terminal-wealth">109.3</td>
+                </tr>
+                <tr class="hover-custom-dark">
+                    <td class="px-6 py-4 border-b border-custom-dark">Volatility (Median)</td>
+                    <td class="px-6 py-4 border-b border-custom-dark text-center" id="cppi-volatility">1.23%</td>
+                    <td class="px-6 py-4 border-b border-custom-dark text-center" id="sp500-volatility">13.88%</td>
+                </tr>
+                <tr class="hover-custom-dark">
+                    <td class="px-6 py-4 border-custom-dark">Max Drawdown</td>
+                    <td class="px-6 py-4 text-center border-custom-dark" id="cppi-max-drawdown">-1.06%</td>
+                    <td class="px-6 py-4 text-center border-custom-dark" id="sp500-max-drawdown">-69.86%</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="simulation-parameters-card mb-8 bg-custom-dark rounded-lg shadow-lg p-4 mt-8"> 
+            <h2 class="text-xl font-semibold text-gray-300 mb-4">
+                Simulation Parameters
+            </h2>
+            <div id="simulation-parameters-card-content">
+                <p class="text-gray-400">The following parameters were used for the CPPI simulations:</p>
+                <table class="w-full text-left mt-4"> 
+                    <tbody>
+                        <tr class="hover-custom-dark">
+                            <td class="px-6 py-4 border-b border-custom-dark">Rebalancing Frequency</td>
+                            <td class="px-6 py-4 border-b border-custom-dark">Quarterly (every 3 months)</td>
+                        </tr>
+                        <tr class="hover-custom-dark">
+                            <td class="px-6 py-4 border-b border-custom-dark">Risk-Free Rate</td>
+                            <td class="px-6 py-4 border-b border-custom-dark">2.8% per year (fixed)</td>
+                        </tr>
+                        <tr class="hover-custom-dark">
+                            <td class="px-6 py-4 border-custom-dark">Risk-Free Rate Interest Payments</td>
+                            <td class="px-6 py-4 border-custom-dark">Paid at the end of each rebalancing period</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
