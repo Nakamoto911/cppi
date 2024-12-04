@@ -34,7 +34,7 @@ function createCharts(filteredData) {
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     tension: 0.4,
                     pointRadius: 0,
-                    borderWidth: 1, // Thinner line
+                    borderWidth: 1.2, // Thinner line
                 },
                 {
                     label: 'Buy-and-Hold Terminal Wealth',
@@ -43,7 +43,7 @@ function createCharts(filteredData) {
                     backgroundColor: 'rgba(255, 99, 132, 0.2)',
                     tension: 0.4,
                     pointRadius: 0,
-                    borderWidth: 1, // Thinner line
+                    borderWidth: 1.2, // Thinner line
                 },
                 {
                     label: 'Initial Wealth',
