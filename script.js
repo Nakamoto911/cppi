@@ -1,4 +1,3 @@
-// Load the data (CSV) dynamically
 const csvFilePath = 'cppi_results2.csv'; // Ensure the CSV is in the same directory or adjust the path.
 
 async function fetchData() {
@@ -13,6 +12,10 @@ function filterData(data, years, multiplier) {
 }
 
 function prepareTerminalWealthData(filteredData) {
+    const riskFreeRate = 2.8;
+    const initialInvestment = 100;
+    const riskFreeTerminalWealth = initialInvestment * Math.pow(1 + riskFreeRate / 100, filteredData.length);
+
     return {
         labels: filteredData.map((row, index) => {
             const date = new Date(row.start_date);
@@ -46,12 +49,27 @@ function prepareTerminalWealthData(filteredData) {
                 pointRadius: 0,
                 borderWidth: 1,
                 borderDash: [1, 2], // Dotted line
+            },
+            {
+                label: 'Risk-Free Asset',
+                data: filteredData.map(row => {
+                    const years = +row.years; // Get the number of years from the data
+                    return 100 * Math.pow(1 + 0.028, years); // Calculate terminal wealth for risk-free asset
+                }),
+                borderColor: 'rgba(255, 165, 0, 0.5)', // Orange color
+                backgroundColor: 'rgba(255, 165, 0, 0.2)',
+                tension: 0.4,
+                pointRadius: 0,
+                borderWidth: 1.2,
+                borderDash: [1, 2], // Dotted line
             }
         ]
     };
 }
 
 function prepareCAGRData(filteredData) {
+    const riskFreeRate = 2.8;
+
     return {
         labels: filteredData.map((row, index) => {
             const date = new Date(row.start_date);
@@ -85,6 +103,16 @@ function prepareCAGRData(filteredData) {
                 pointRadius: 0,
                 borderWidth: 1,
                 borderDash: [1, 2], // Dotted line
+            },
+            {
+                label: 'Risk-Free Rate',
+                data: filteredData.map(() => 2.8), // Fixed 2.8% CAGR
+                borderColor: 'rgba(255, 165, 0, 0.5)', // Orange color
+                backgroundColor: 'rgba(255, 165, 0, 0.2)',
+                tension: 0.4,
+                pointRadius: 0,
+                borderWidth: 1.2,
+                borderDash: [1, 2], // Dotted line
             }
         ]
     };
@@ -114,16 +142,6 @@ function prepareVolatilityData(filteredData) {
                 tension: 0.4,
                 pointRadius: 0,
                 borderWidth: 1.2,
-            },
-            {
-                label: '', // Changed label
-                data: filteredData.map(() => 0), // Data now represents 0% return
-                borderColor: 'rgba(255, 255, 255, 0)', // Light color
-                backgroundColor: 'rgba(255, 255, 255, 0)', // No fill
-                tension: 0,
-                pointRadius: 0,
-                borderWidth: 0,
-                borderDash: [1, 2], // Dotted line
             }
         ]
     };
@@ -213,10 +231,7 @@ async function initializeDashboard() {
 
         // Update the chart data
         chart.data.labels = chartData.labels;
-        chartData.datasets.forEach((dataset, index) => {
-            chart.data.datasets[index].label = dataset.label; // Update the label
-            chart.data.datasets[index].data = dataset.data;
-        });
+        chart.data.datasets = chartData.datasets; // Update the entire datasets array
 
         // Trigger the update with animation
         chart.update();
@@ -231,6 +246,18 @@ async function initializeDashboard() {
         const cppiMaxDrawdown = Math.min(...filteredData.map(row => +row.cppi_max_drawdown));
         const sp500MaxDrawdown = Math.min(...filteredData.map(row => +row.sp500_max_drawdown));
 
+        // New calculations
+        const cppiLossesPercent = (filteredData.filter(row => +row.cppi_terminal_wealth < 100).length / filteredData.length * 100).toFixed(0) + "%";
+        const sp500LossesPercent = (filteredData.filter(row => +row.sp500_terminal_wealth < 100).length / filteredData.length * 100).toFixed(0) + "%";
+
+        const riskFreeWealth = filteredData.map(row => {
+            const years = +row.years;
+            return 100 * Math.pow(1 + 0.028, years);
+        });
+
+        const cppiBelowRiskFreePercent = (filteredData.filter((row, index) => +row.cppi_terminal_wealth < riskFreeWealth[index]).length / filteredData.length * 100).toFixed(0) + "%";
+        const sp500BelowRiskFreePercent = (filteredData.filter((row, index) => +row.sp500_terminal_wealth < riskFreeWealth[index]).length / filteredData.length * 100).toFixed(0) + "%";
+        
         document.getElementById('cppi-cagr').textContent = (cppiCAGR * 100).toFixed(2) + "%";
         document.getElementById('sp500-cagr').textContent = (sp500CAGR * 100).toFixed(2) + "%";
         document.getElementById('cppi-terminal-wealth').textContent = cppiTerminalWealth.toFixed(1);
@@ -239,12 +266,12 @@ async function initializeDashboard() {
         document.getElementById('sp500-volatility').textContent = (sp500Volatility * 100).toFixed(2) + "%";
         document.getElementById('cppi-max-drawdown').textContent = (cppiMaxDrawdown).toFixed(2) + "%";
         document.getElementById('sp500-max-drawdown').textContent = (sp500MaxDrawdown).toFixed(2) + "%";
+        document.getElementById('cppi-losses-percent').textContent = cppiLossesPercent;
+        document.getElementById('sp500-losses-percent').textContent = sp500LossesPercent;
+        document.getElementById('cppi-below-risk-free-percent').textContent = cppiBelowRiskFreePercent;
+        document.getElementById('sp500-below-risk-free-percent').textContent = sp500BelowRiskFreePercent;;
 
-        // Update the stat box values
-        document.getElementById('cppi-cagr-stat').textContent = (cppiCAGR * 100).toFixed(2) + "%";
-        document.getElementById('sp500-cagr-stat').textContent = (sp500CAGR * 100).toFixed(2) + "%";
-        document.getElementById('cppi-volatility-stat').textContent = (cppiVolatility * 100).toFixed(2) + "%";
-        document.getElementById('sp500-volatility-stat').textContent = (sp500Volatility * 100).toFixed(2) + "%";
+
     }
 
     yearsSelect.addEventListener('change', updateCharts);
