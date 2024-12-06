@@ -229,12 +229,17 @@ async function initializeDashboard() {
             chartData = prepareVolatilityData(filteredData);
         }
 
-        // Update the chart data
-        chart.data.labels = chartData.labels;
-        chart.data.datasets = chartData.datasets; // Update the entire datasets array
+    // Update the chart data with a check for the number of datasets
+    chart.data.labels = chartData.labels;
+    chart.data.datasets.forEach((dataset, i) => {
+        // Only update data if the dataset exists in the new data
+        if (chartData.datasets[i]) { 
+            dataset.data = chartData.datasets[i].data;
+        }
+    });
 
-        // Trigger the update with animation
-        chart.update();
+    // Trigger the update with animation
+    chart.update();
 
         // Calculate and update table data
         const cppiCAGR = median(filteredData.map(row => +row.cppi_cagr));
