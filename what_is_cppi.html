@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What is CPPI</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif; 
+            margin: 0;
+            padding: 0;
+        }
+
+        canvas {
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        /* Custom background color */
+        .bg-custom-dark {
+            background-color: #1a1a1a; /* Very dark background */
+        }
+
+        .border-custom-dark {
+            border-color: #2a2a2a; /* Subtle border color */
+        }
+
+        .hover-custom-dark:hover {
+            background-color: #2a2a2a; /* Subtle hover effect */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border-bottom: 1px solid #2a2a2a;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th:first-child,
+        td:first-child {
+            border-left: none;
+        }
+
+        th:last-child,
+        td:last-child {
+            border-right: none;
+        }
+
+        /* Custom styles for select elements */
+        select {
+            background-color: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            color: #ffffff;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #4a4a4a;
+        }
+
+        /* Custom styles for tabs */
+        .tabs .tab {
+            @apply px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-600 text-gray-300; 
+            border-bottom: 2px solid transparent; /* Add a transparent border initially */
+        }
+
+        .tabs .tab.active {
+            @apply bg-blue-500 text-white;
+            border-bottom-color: #4a4a4a; /* Add a visible border at the bottom when active */
+        }
+
+        /* Adjusted styles for margins */
+        .container {
+            max-width: 960px; 
+        }
+
+        @media (min-width: 640px) { 
+            .container {
+                padding: 2rem 1rem; /* Reduced side padding */
+            }
+        }
+
+        .card {
+            padding: 4rem 7rem; /* Increased padding inside cards */
+        }
+        p {
+            line-height: 1.8; 
+        }
+        p + p {
+            margin-top: 2%; 
+        }
+        img {
+        padding-top: 40px; /* Adjust the value as needed */
+        padding-bottom: 20px; /* Adjust the value as needed */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto p-6"> 
+        <div class="header text-center mb-8">
+             <h1 class="text-7xl font-semibold text-gray-300">What is CPPI and why should you care? </h1>
+        </div>
+ 
+        <div class="card mb-8 bg-custom-dark rounded-lg shadow-lg p-4 mt-8">
+             <div id="what-is-cppi-card-content">
+                <p class="text-gray-400">CPPI, or Constant Proportion Portfolio Insurance, is an investment strategy whose goal is to allow investment in risky assets (like stocks) while still guaranteeing a minimum level of capital at the end.</p>
+                <p class="text-gray-400">It helps you decide how much to put into risky assets and how much to keep safe. It does this dynamically, increasing your risky investments when things look good and reducing them when the market looks shaky.</p>
+                <img src="img/CPPI Dark Mode.png" alt="cppi">
+                <p class="text-gray-400">CPPI was introduced to the investment world by Fischer Black and Robert Jones in 1987.</p>
+             </div>
+        </div>
+
+        <div class="card mb-8 bg-custom-dark rounded-lg shadow-lg p-4 mt-8">
+            <div id="">
+                <h2 class="text-xl font-semibold text-gray-200 mb-4">
+                    How CPPI Works
+                </h2>
+               <p class="text-gray-400">Let's say you have $100 today, and you absolutely need to have at least $100 in ten years for a specific project. How much of that money can you risk for a chance at higher gains in the meantime?</p>
+               <p class="text-gray-400">CPPI works by balancing your investments between two components:</p>
+               <div class="mt-4"> 
+                    <div class="bg-black-800 rounded-lg shadow-lg p-4 mb-4 border border-custom-dark"> 
+                        <h3 class="text-lg font-semibold mb-2">1. Cushion</h3>
+                        <p class="text-gray-300">This is the amount of money you can afford to risk, calculated as the difference between your total wealth and the floor (the minimum amount you want to safeguard).</p>
+                        <p class="text-gray-300">A formula to calculate the Floor is: </p>
+                        <div class="mt-4">
+                            $$Floor (today) = Target Wealth \times (1 + Safe Asset Rate)^{-N}$$
+                            <p class="text-gray-400 mt-2">where <i>N</i> is the number of remaining rebalancing periods.</p></br>
+                        </div> 
+                        <p class="text-gray-300"><b>Example: </b>If your total wealth is $100 and your floor is $76, your cushion is $24</p>
+                        <img src="img/cushion.png" alt="Cushion">
+                        <p class="text-gray-300">By allocating $76 to the safe asset earning a 2.8% annual return, you can ensure reaching $100 at the end of 10 years, regardless of market conditions.</p>
+                    </div>
+                    <div class="bg-black-800 rounded-lg shadow-lg p-4 border border-custom-dark">
+                        <h3 class="text-lg font-semibold mb-2">2. Multiplier</h3>
+                        <p class="text-gray-300">The multiplier is a predetermined number that you multiply the cushion by to determine your exposure to the risky asset. It, therefore, dictates how aggressively you allocate your cushion to risky assets.</p>
+                        <p class="text-gray-300"><b>Example: </b>With a multiplier of 3, you’ll invest three times your cushion ($24 × 3 = $72) in risky assets, while the rest ($28) remains in bonds.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-8 bg-custom-dark rounded-lg shadow-lg p-4 mt-8">
+            <div id="card">
+                <h2 class="text-xl font-semibold text-gray-200 mb-4">
+                    Why does this work?
+                </h2>
+                <p class="text-gray-300">You can invest more than your cushion in risky assets because extreme losses in a short time are rare. If such a loss occurs, the CPPI mechanism will reallocate your remaining wealth to the safe asset, preserving your floor.</p>
+                <p class="text-gray-300">In essence, the multiplier reflects how much risk you are willing to take:</p>
+                <ul class="text-gray-300 list-disc pl-5 p-4 space-y-3">
+                    <li>A multiplier of <b>3x</b> means you can withstand a 33% drop in risky assets.</li>
+                    <li>A <b>4x</b> multiplier allows for a 25% drop, and so on.</li>
+                </ul>
+                <p class="text-gray-300">By adjusting the multiplier, CPPI allows you to tailor your strategy based on your risk tolerance while maintaining a built-in safety mechanism.</p>
+                <div class="bg-black-800 rounded-lg shadow-lg p-6 border border-custom-dark mt-7">
+                    <h3 class="text-lg font-semibold mb-2">Step-by-Step Process</h3>
+                    <ol class="text-gray-300 pl-5 p-4 list-decimal space-y-3"> 
+                        <li>Decide on a “floor” — the amount you want to protect (e.g., $80 of your $100).</li>
+                        <li>Calculate your cushion (e.g., $100 - $80 = $20).</li>
+                        <li>Use the multiplier to allocate your risky exposure (e.g., $60 in stocks, $40 in bonds).</li>
+                        <li>Rebalance periodically (eg. quarterly) to adjust for market changes</li>
+                    </ol>
+                </div>
+            </div>
+       </div>
+
+       <div class="card mb-8 bg-custom-dark rounded-lg shadow-lg p-4 mt-8">
+            <div id="card">
+                <h2 class="text-xl font-semibold text-gray-200 mb-4">
+                    Pros and Cons
+                </h2>
+                <div class="flex flex-col md:flex-row gap-4 mt-4"> 
+                    <div class="bg-custom-dark rounded-lg shadow-lg p-4 w-full md:w-1/2"> 
+                        <h3 class="text-lg font-semibold text-gray-300 mb-2 text-center">Pros of CPPI</h3>
+                        <ul class="text-gray-300 list-disc pl-5 p-4 space-y-3">
+                            <li><b>Downside Protection:</b> Keeps a portion of your money in safe assets, limiting losses.</li>
+                            <li><b>Upside Potential:</b> Lets you benefit from good market conditions by increasing risky investments.</li>
+                        </ul>                
+                    </div>
+                    <div class="bg-custom-dark rounded-lg shadow-lg p-4 w-full md:w-1/2">
+                        <h3 class="text-lg font-semibold text-gray-300 mb-2 text-center">Cons of CPPI</h3>
+                        <ul class="text-gray-300 list-disc pl-5 p-4 space-y-3">
+                            <li><b>Missed Opportunities:</b> If the market soars, CPPI may underperform compared to an all-risky portfolio.                        </li>
+                            <li><b>Complex Rules:</b> It requires some setup and understanding compared to simpler strategies.</li>
+                            <li><b>Costs of Rebalancing:</b> Frequent adjustments might incur transaction fees, depending on your investment platform.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-8 bg-custom-dark rounded-lg shadow-lg p-4 mt-8">
+            <div id="card">
+                <p class="text-gray-300">CPPI lets you blend different assets to match your goals. </p>
+                <img src="img/cppi positionning.png" alt="cppi">
+                <p class="text-gray-300">Safe assets offer protection, risky assets chase growth, and CPPI dynamically balances between them for a customized approach.</p>
+            </div>
+        </div>
+
+        <div class="card mb-8 bg-custom-dark rounded-lg shadow-lg p-4 mt-8">
+            <div id="card">
+                <h2 class="text-xl font-semibold text-gray-200 mb-4">
+                    How We Built the Simulations
+                </h2>
+                <p class="text-gray-300">To better understand how CPPI works, we conducted a series of simulations using the following assumptions and parameters:</p>
+                <ol class="text-gray-300 pl-5 p-4 list-decimal space-y-3"> 
+                    <li><b>Theoretical Safe Asset: </b>We used a hypothetical safe asset with a fixed annual return of <b>2.8%</b>, which remains constant over time.</li>
+                    <li><b>S&P 500 Nominal Returns: </b>For the risky asset, we used the actual nominal returns of the S&P 500 index from January 1928 to December 2023. This approach ensures our simulations reflect historical market conditions, including periods of both high volatility and steady growth.</li>
+                    <li><b>Initial Wealth: </b>Each simulation starts with an initial wealth of 100, and the primary objective is to ensure that the final wealth at the end of the investment period is at least 100.</li>
+                    <li><b>Quarterly Rebalancing: </b>Portfolios are rebalanced every three months to adjust the allocation between the safe and risky assets, ensuring alignment with the cushion and floor calculations.</li>
+                    <li><b>Floor Calculation: </b>At the end of each rebalancing period, the floor—the minimum wealth to preserve—is recalculated. The floor is determined by compounding the target final wealth (100) back to the current period.</li>
+                    <li><b>Interest Payments: </b>The interest from the safe asset is paid at the end of each rebalancing period and reinvested accordingly, contributing to portfolio growth.</li>
+                    <li><b>No Leverage: </b>To keep the simulations straightforward, we assume no debt or leverage is used. This means that even if the risky asset performs exceptionally well, the total investment in risky assets is capped at the current wealth. (Some variations of CPPI allow leverage in such cases, but we chose not to include it.)</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="card mb-8 bg-custom-dark rounded-lg shadow-lg p-4 mt-8">
+            <div id="card">
+                <h2 class="text-xl font-semibold text-gray-200 mb-4">
+                    100,000 Simulations
+                </h2>
+                <p class="text-gray-300">We ran simulations spanning January 1928 to December 2023, covering a wide range of market conditions. Each simulation involved:</p>
+                <ul class="text-gray-300 list-disc pl-5 p-4 space-y-3">
+                    <li><b>Investment Durations:</b> From 1 year to 20 years.</li>
+                    <li><b>Multipliers: </b> Ranging from 1x to 5x.</li>
+                </ul>
+                <p class="text-gray-300">For each combination of investment duration and multiplier, we ran simulations starting on the first day of every month. For instance:</p>
+                <ul class="text-gray-300 list-disc pl-5 p-4 space-y-3">
+                    <li>Period 1: January 1, 1928, to January 1, 1938 (for a 10-year duration).</li>
+                    <li>Period 2: February 1, 1928, to February 1, 1938.</li>
+                </ul>
+                <p class="text-gray-300">This process was repeated for all possible combinations, resulting in more than <b>100,000</b> simulations. Such a comprehensive dataset allows us to evaluate how CPPI performs across various market conditions, including bull, bear, and flat markets.</p>
+            </div>
+        </div>
+
+        <div class="card mb-8 bg-custom-dark rounded-lg shadow-lg p-4 mt-8">
+            <div id="card">
+                <p class="text-gray-300">Now that you know what CPPI is and how it works, why not explore if it’s right for you? CPPI might just be the strategy that protects your money while still giving you a shot at growth.</p>
+                <div class="call-to-action mt-8 w-full">
+                    <a href="index.html" class="inline-block w-full bg-blue-500 hover:bg-blue-700 text-white font-semibold py-4 px-12 rounded-full shadow-lg transition duration-300 ease-in-out text-2xl text-center">
+                      Launch Dashboard
+                    </a>
+                </div></br>
+                <p class="text-gray-300">Remember: CPPI is just one of many strategies. Always choose the one that aligns with your financial goals and risk tolerance.</p>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

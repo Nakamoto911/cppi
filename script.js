@@ -300,6 +300,7 @@ async function initializeDashboard() {
 
     // Initial chart render
     updateCharts();
+    
 }
 
 initializeDashboard();
