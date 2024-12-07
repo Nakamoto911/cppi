@@ -148,25 +148,35 @@
         </div>
         <nav class="nav">
             <a href="index.html">Simulations</a>
-            <a href="what_is_cppi.html" class="active">What is CPPI?</a>
+            <a href="cppi_period.html" class="active">Period Analysis</a>
+            <a href="what_is_cppi.html">What is CPPI?</a>
         </nav>
     </header>
+
     <div class="container mx-auto p-6">
         <h1 class="text-3xl font-bold mb-4">CPPI Chart</h1>
 
-        <label for="startDate">Start Date:</label>
-        <select id="startDate"></select>
+        <div class="flex justify-between items-center mb-4"> 
+            <div class="flex items-center">
+                <label for="startDate">Start Date:</label>
+                <select id="startDate"></select>
+            </div>
 
-        <label for="duration">Investment Horizon:</label>
-        <select id="duration">
-          <option value="5">5 years</option>
-          <option value="10">10 years</option>
-          <option value="15">15 years</option>
-        </select>
-
-        <div id="chartContainer">
-            <canvas id="cppiChart"></canvas>
+            <div class="flex items-center"> 
+                <label for="duration" class="mr-2">Investment Horizon:</label> 
+                <select id="duration">
+                  <option value="5">5 years</option>
+                  <option value="10">10 years</option>
+                  <option value="15">15 years</option>
+                </select>
+            </div>
         </div>
+
+        <div class="cchart-container bg-custom-dark rounded-lg shadow-lg p-4"> 
+            <div id="chartContainer">
+                <canvas id="cppiChart"></canvas>
+            </div>
+        </div> 
     </div>
 
     <script src="cppi_script.js"></script> </body>

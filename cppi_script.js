@@ -45,8 +45,7 @@ function prepareChartData(cppiData, selectedStartDate, selectedDuration) {
                 data: filteredData.map(row => row['End Portfolio']),
                 borderColor: 'rgba(75, 192, 192, 1)',
                 //backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                tension: 0.4,
-                pointRadius: 0,
+                pointRadius: 3,
                 borderWidth: 2,
             },
             {
@@ -54,15 +53,13 @@ function prepareChartData(cppiData, selectedStartDate, selectedDuration) {
                 data: filteredData.map(row => row['S&P 500 Value']),
                 borderColor: 'rgba(255, 99, 132, 1)',
                 //backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                tension: 0.4,
-                pointRadius: 0,
+                pointRadius: 3,
                 borderWidth: 2,
             },
             {
                 label: 'Initial Wealth',
                 data: filteredData.map(() => initialWealth), 
                 borderColor: 'rgba(255, 255, 255, 0.5)', // Light color
-                tension: 0,
                 pointRadius: 0,
                 borderWidth: 1,
                 borderDash: [1, 2], // Dotted line
@@ -71,7 +68,6 @@ function prepareChartData(cppiData, selectedStartDate, selectedDuration) {
                 label: 'Floor',
                 data: filteredData.map(row => row.Floor), 
                 borderColor: 'rgba(75, 192, 192, 1)',
-                tension: 0,
                 pointRadius: 0,
                 borderWidth: 1,
                 borderDash: [1, 2], // Dotted line
@@ -81,7 +77,6 @@ function prepareChartData(cppiData, selectedStartDate, selectedDuration) {
                 data: shiftedRiskyExposureData, // Use the shifted data
                 borderColor: 'grey', 
                 backgroundColor: 'rgba(128, 128, 128, 0.2)', // Light grey with transparency
-                tension: 0.4, 
                 pointRadius: 0,
                 borderWidth: 0, 
                 fill: true, 
@@ -115,11 +110,14 @@ async function generateChart() {
                 x: {
                     ticks: {
                         color: '#ffffff',
-                        // Include only year and month in the labels
+                        // Display only the year in YYYY format
                         callback: function(value, index, values) {
-                            const date = new Date(this.getLabelForValue(value)); 
-                            return date.toLocaleString('default', { year: 'numeric', month: 'short' });
-                        }
+                            const date = new Date(this.getLabelForValue(value));
+                            return date.getFullYear(); 
+                        },
+                        // Reduce the number of ticks
+                        autoSkip: true, 
+                        maxTicksLimit: Math.max(1, selectedDuration - 1)
                     },
                     grid: {
                         color: '#2a2a2a'
