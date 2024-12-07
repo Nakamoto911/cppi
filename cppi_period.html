@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPPI Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif; 
+            margin: 0;
+            padding: 0;
+        }
+
+        canvas {
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        /* Custom background color */
+        .bg-custom-dark {
+            background-color: #1a1a1a;
+            /* Very dark background */
+        }
+
+        .border-custom-dark {
+            border-color: #2a2a2a;
+            /* Subtle border color */
+        }
+
+        .hover-custom-dark:hover {
+            background-color: #2a2a2a;
+            /* Subtle hover effect */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border-bottom: 1px solid #2a2a2a;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th:first-child,
+        td:first-child {
+            border-left: none;
+        }
+
+        th:last-child,
+        td:last-child {
+            border-right: none;
+        }
+
+        /* Custom styles for select elements */
+        select {
+            background-color: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            color: #ffffff;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #4a4a4a;
+        }
+
+        /* Custom styles for tabs */
+        .tabs .tab {
+            @apply px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-600 text-gray-300;
+            border-bottom: 2px solid transparent; /* Add a transparent border initially */
+        }
+
+        .tabs .tab.active {
+            @apply bg-blue-500 text-white;
+            border-bottom-color: #4a4a4a; /* Add a visible border at the bottom when active */
+        }
+
+    /* Header styles */
+    header {
+        background-color: #1a1a1a;
+        padding: 0.5rem;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    header .logo img {
+        height: 30px;
+    }
+
+    header .nav {
+    display: flex;
+    gap: 1rem;
+    margin-left: 4rem;
+    }
+
+    header .nav a {
+        color: #cccccc;
+        /* Darker font color for inactive links */
+        text-decoration: none;
+        font-weight: regular;
+        font-size: 0.800rem; /* Reduced font size */
+        padding: 0.4rem 1rem;
+        /* Add padding for better hover effect */
+        border-radius: 4px;
+        transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+    }
+
+    header .nav a.active {
+        color: #ffffffee;
+        /* Lighter font color for active link */
+        background-color: #121212;
+        /* Darker background for active link */
+    }
+
+    header .nav a:hover {
+        background-color: #4a4a4a53;
+        /* Darker background on hover */
+        color: #ffffff;
+        /* Keep text color white */
+    }
+    
+    header .nav a.active:hover {
+    background-color: #121212;
+    /* Keep the active background color */
+    color: #ffffffee;
+    /* Keep the active text color */
+    }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo pl-7">
+            <img src="img/parrot.png" alt="App Logo" style="width: 24px; height: 24px;">
+        </div>
+        <nav class="nav">
+            <a href="index.html">Simulations</a>
+            <a href="what_is_cppi.html" class="active">What is CPPI?</a>
+        </nav>
+    </header>
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold mb-4">CPPI Chart</h1>
+
+        <label for="startDate">Start Date:</label>
+        <select id="startDate"></select>
+
+        <label for="duration">Investment Horizon:</label>
+        <select id="duration">
+          <option value="5">5 years</option>
+          <option value="10">10 years</option>
+          <option value="15">15 years</option>
+        </select>
+
+        <div id="chartContainer">
+            <canvas id="cppiChart"></canvas>
+        </div>
+    </div>
+
+    <script src="cppi_script.js"></script> </body>
+</html>
