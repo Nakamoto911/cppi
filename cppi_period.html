@@ -62,6 +62,11 @@
         td:last-child {
             border-right: none;
         }
+        /* Center-align text in the simulation data table */
+        .simulation-data-table th,
+        .simulation-data-table td {
+            text-align: center;
+        }
 
         /* Custom styles for select elements */
         select {
@@ -195,28 +200,59 @@
                 <canvas id="cppiChart"></canvas>
             </div>
         </div> 
+
+
+        <div class="bg-custom-dark rounded-lg shadow-lg p-4 mt-8">
+          <h2 class="text-xl font-medium mb-4">Simulation Data</h2> 
+            <table id="cppiTable" class="simulation-data-table">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Start Portfolio</th>
+                    <th>Floor</th>
+                    <th>Cushion</th>
+                    <th>Start Risky Exp.</th>
+                    <th>Start Safe Exp.</th>
+                    <th>Risky Return (€)</th>
+                    <th>Safe Return (€)</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+
+    <div class="simulation-parameters-card mb-8 bg-custom-dark rounded-lg shadow-lg p-4 mt-8">
+        <h2 class="text-xl font-semibold text-gray-300 mb-4">
+            Simulation Parameters
+        </h2>
+        <div id="simulation-parameters-card-content">
+            <p class="text-gray-400">The following parameters were used for the CPPI simulations:</p>
+            <table class="w-full text-left mt-4">
+                <tbody>
+                    <tr class="hover-custom-dark">
+                        <td class="px-6 py-4 border-custom-dark">Multiplier</td>
+                        <td class="px-6 py-4 border-custom-dark">3x</td>
+                    </tr>
+                    <tr class="hover-custom-dark">
+                        <td class="px-6 py-4 border-b border-custom-dark">Rebalancing Frequency</td>
+                        <td class="px-6 py-4 border-b border-custom-dark">Quarterly (every 3 months)</td>
+                    </tr>
+                    <tr class="hover-custom-dark">
+                        <td class="px-6 py-4 border-b border-custom-dark">Risk-Free Rate</td>
+                        <td class="px-6 py-4 border-b border-custom-dark">2.8% per year (fixed)</td>
+                    </tr>
+                    <tr class="hover-custom-dark">
+                        <td class="px-6 py-4 border-custom-dark">Risk-Free Rate Interest Payments</td>
+                        <td class="px-6 py-4 border-custom-dark">Paid at the end of each rebalancing period</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <div class="container mx-auto p-6">
-        <div class="bg-custom-dark rounded-lg shadow-lg p-4">
-          <h2 class="text-xl font-medium mb-4">CPPI Simulation Data</h2> <table id="cppiTable">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Start Portfolio</th>
-                <th>Floor</th>
-                <th>Cushion</th>
-                <th>Start Risky Exp.</th>
-                <th>Start Safe Exp.</th>
-                <th>Risky Return (€)</th>
-                <th>Safe Return (€)</th>
-              </tr>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
-        </div>
-      </div>
+</div>
 
     <script src="cppi_script.js"></script> </body>
 </html>
