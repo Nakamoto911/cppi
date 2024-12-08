@@ -37,6 +37,13 @@ function prepareChartData(cppiData, selectedStartDate, selectedDuration) {
         }
     }).filter(item => item !== null); // Remove the null (first) item
     
+    const riskFreeRate = 0.028; // 2.8% per year
+    const quarterlyRate = riskFreeRate / 4;
+    const riskFreeData = filteredData.map((row, index) => {
+        const currentQuarter = Math.floor(index / 3) + 1; // Calculate current quarter
+        return initialWealth * (1 + quarterlyRate) ** currentQuarter;
+    });
+
     return {
         labels: filteredData.map(row => row.Date),
         datasets: [
@@ -70,6 +77,15 @@ function prepareChartData(cppiData, selectedStartDate, selectedDuration) {
                 borderColor: 'rgba(75, 192, 192, 1)',
                 pointRadius: 0,
                 borderWidth: 1,
+                borderDash: [6, 2], // Dotted line
+            },
+            {
+                label: 'Risk-Free Rate',
+                data: riskFreeData,
+                borderColor: 'rgba(255, 165, 0, 0.5)', // Orange color
+                tension: 0.4,
+                pointRadius: 0,
+                borderWidth: 1.2,
                 borderDash: [1, 2], // Dotted line
             },
             {
