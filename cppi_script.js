@@ -158,7 +158,15 @@ async function generateChart() {
                     labels: {
                         color: '#ffffff'
                     }
-                }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: function(context) {
+                            const date = new Date(context[0].label);
+                            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); 
+                        }
+                    }
+                },
             }
         }
     });
