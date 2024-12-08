@@ -158,7 +158,7 @@
 
         <div class="flex justify-between items-center mb-4"> 
             <div class="flex items-center">
-                <label for="startDate">Start Date:</label>
+                <label for="startDate" class="mr-2">Start Date:</label>
                 <select id="startDate"></select>
             </div>
 
@@ -172,12 +172,51 @@
             </div>
         </div>
 
-        <div class="cchart-container bg-custom-dark rounded-lg shadow-lg p-4"> 
+        <div class="grid grid-cols-3 gap-4 mb-4">
+            <div class="bg-custom-dark rounded-lg shadow-lg p-4">
+                <h2 class="text-lg font-medium mb-2">CPPI</h2>
+                <p class="text-3xl font-bold" id="cppi-final-wealth">-</p>
+                <p class="text-sm" id="cppi-cagr">-</p>
+            </div>
+            <div class="bg-custom-dark rounded-lg shadow-lg p-4">
+                <h2 class="text-lg font-medium mb-2">S&P 500</h2>
+                <p class="text-3xl font-bold" id="sp500-final-wealth">-</p>
+                <p class="text-sm" id="sp500-cagr">-</p>
+            </div>
+            <div class="bg-custom-dark rounded-lg shadow-lg p-4">
+                <h2 class="text-lg font-medium mb-2">Risk-Free Rate</h2>
+                <p class="text-3xl font-bold" id="risk-free-final-wealth">-</p>
+                <p class="text-sm" id="risk-free-cagr">-</p>
+            </div>
+        </div>
+
+        <div class="bg-custom-dark rounded-lg shadow-lg p-4"> 
             <div id="chartContainer">
                 <canvas id="cppiChart"></canvas>
             </div>
         </div> 
     </div>
+
+    <div class="container mx-auto p-6">
+        <div class="bg-custom-dark rounded-lg shadow-lg p-4">
+          <h2 class="text-xl font-medium mb-4">CPPI Simulation Data</h2> <table id="cppiTable">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Start Portfolio</th>
+                <th>Floor</th>
+                <th>Cushion</th>
+                <th>Start Risky Exp.</th>
+                <th>Start Safe Exp.</th>
+                <th>Risky Return (€)</th>
+                <th>Safe Return (€)</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
     <script src="cppi_script.js"></script> </body>
 </html>

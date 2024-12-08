@@ -170,6 +170,8 @@ async function generateChart() {
             }
         }
     });
+    // Update the table after generating the chart 
+    updateTable(cppiData, selectedStartDate, selectedDuration); 
 }
 
 async function populateStartingDates() {
@@ -187,12 +189,96 @@ async function populateStartingDates() {
     });
 }
 
-// Add event listeners to both dropdowns
-document.getElementById('startDate').addEventListener('change', generateChart);
-document.getElementById('duration').addEventListener('change', generateChart);
+async function calculateStats(cppiData, selectedStartDate, selectedDuration) {
+    const startDate = new Date(selectedStartDate);
 
-// Call the function to populate the starting dates
-populateStartingDates();
+    // Filter data by Start Date and Duration
+    const filteredData = cppiData.filter(row => {
+        return row['Start Date'].getTime() === startDate.getTime() && 
+               row['Duration (years)'] == selectedDuration; 
+    });
 
-// Initial chart generation
-generateChart();
+    if (filteredData.length === 0) {
+        return null; // Or handle the case where no data is found
+    }
+
+    const initialWealth = filteredData[0]['Start Portfolio'];
+    const finalWealthCPPI = filteredData[filteredData.length - 1]['End Portfolio'];
+    const finalWealthSP500 = filteredData[filteredData.length - 1]['S&P 500 Value'];
+    const years = selectedDuration;
+
+    // Calculate CAGR (Compound Annual Growth Rate)
+    const cagrCPPI = (Math.pow(finalWealthCPPI / initialWealth, 1 / years) - 1) * 100;
+    const cagrSP500 = (Math.pow(finalWealthSP500 / initialWealth, 1 / years) - 1) * 100;
+    const cagrRiskFree = 2.8;
+
+    return {
+        cppiFinalWealth: finalWealthCPPI.toLocaleString('en-US', { maximumFractionDigits: 1 }), 
+        cppiCAGR: `${cagrCPPI.toFixed(1)}%`,
+        sp500FinalWealth: finalWealthSP500.toLocaleString('en-US', { maximumFractionDigits: 1 }),
+        sp500CAGR: `${cagrSP500.toFixed(1)}%`, 
+        riskFreeFinalWealth: (initialWealth * (1 + 0.028) ** years).toLocaleString('en-US', { maximumFractionDigits: 1 }),
+        riskFreeCAGR: `${cagrRiskFree.toFixed(1)}%` 
+    };
+}
+
+async function updateStats() {
+    const cppiData = await fetchData();
+    const selectedStartDate = document.getElementById('startDate').value;
+    const selectedDuration = parseInt(document.getElementById('duration').value, 10);
+
+    const stats = await calculateStats(cppiData, selectedStartDate, selectedDuration);
+
+    if (stats) {
+        document.getElementById('cppi-final-wealth').textContent = stats.cppiFinalWealth;
+        document.getElementById('cppi-cagr').textContent = stats.cppiCAGR;
+        document.getElementById('sp500-final-wealth').textContent = stats.sp500FinalWealth;
+        document.getElementById('sp500-cagr').textContent = stats.sp500CAGR;
+        document.getElementById('risk-free-final-wealth').textContent = stats.riskFreeFinalWealth;
+        document.getElementById('risk-free-cagr').textContent = stats.riskFreeCAGR;
+    }
+}
+
+async function updateTable(cppiData, selectedStartDate, selectedDuration) {
+    const startDate = new Date(selectedStartDate);
+  
+    // Filter data by Start Date and Duration
+    const filteredData = cppiData.filter(row => {
+      return row['Start Date'].getTime() === startDate.getTime() &&
+        row['Duration (years)'] == selectedDuration;
+    });
+  
+    const tableBody = document.getElementById('cppiTable').getElementsByTagName('tbody')[0];
+    tableBody.innerHTML = ''; // Clear existing table rows
+  
+    filteredData.forEach(row => {
+      const newRow = tableBody.insertRow();
+  
+      // Create cells and populate with data (using toFixed(1) for numeric values)
+      newRow.insertCell().textContent = row.Date.toLocaleDateString();
+      newRow.insertCell().textContent = row['Start Portfolio']; 
+      newRow.insertCell().textContent = row.Floor;
+      newRow.insertCell().textContent = row.Cushion;
+      newRow.insertCell().textContent = row['Start Risky Exp.'];
+      newRow.insertCell().textContent = row['Start Safe Exp.'];
+      newRow.insertCell().textContent = row['Risky Return (€)'];
+      newRow.insertCell().textContent = row['Safe Return (€)']; 
+    });
+  }
+  
+  // Add event listeners to both dropdowns
+  document.getElementById('startDate').addEventListener('change', () => {
+    generateChart();
+    updateStats(); // Update stats when start date changes
+  });
+  document.getElementById('duration').addEventListener('change', () => {
+    generateChart();
+    updateStats(); // Update stats when duration changes
+  });
+  
+  // Call the function to populate the starting dates
+  populateStartingDates();
+  
+  // Initial chart generation and stats update
+  generateChart();
+  updateStats();
