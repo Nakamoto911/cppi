@@ -8,6 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         body {
             background-color: #121212;
@@ -152,7 +154,34 @@
         background-color: #121212; /* Keep the active background color */
         color: #ffffffee;  /* Keep the active text color */
         }
-</style>
+        header .help-icon {
+        color: #cccccc;
+        text-decoration: none;
+        font-weight: regular;
+        font-size: 0.800rem;
+        padding: 0.4rem 1rem;
+        border-radius: 4px;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    header .help-icon:hover {
+        background-color: #4a4a4a53;
+        color: #ffffff;
+    }
+    header .help-icon {
+        padding: 0.2rem 1.2rem; /* Adjust the padding as needed */
+        margin: 0; /* Remove any margin */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: auto; /* Push the icon to the right */
+    }
+
+    header .help-icon .material-icons {
+        font-size: 1.2rem; /* Adjust the size as needed */
+    }
+    </style>
+</head>
 <body>
     <header>
         <div class="logo pl-7">
@@ -161,9 +190,12 @@
         <nav class="nav">
             <a href="index.html">Simulations</a>
             <a href="cppi_period.html">Period Analysis</a>
-            <a href="what_is_cppi.html" class="active">What is CPPI?</a>
         </nav>
+        <a href="what_is_cppi.html" title="Help" class="help-icon ml-auto">
+            <span class="material-icons">help</span>
+        </a>
     </header>
+
     <div class="container mx-auto"> 
         <div class="title text-center mb-8">
              <h1 class="text-4xl font-semibold text-gray-300">What is CPPI and why should you care? </h1>
