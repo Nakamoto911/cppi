@@ -26,16 +26,15 @@ function prepareChartData(cppiData, selectedStartDate, selectedDuration) {
     const initialWealth = filteredData.length > 0 ? filteredData[0]['Start Portfolio'] : 100;
     const floor = filteredData.length > 0 ? filteredData[0]['Floor'] : 87; 
 
-    // Shift 'Risky Exposure' data by one month
-    const shiftedRiskyExposureData = filteredData.map((row, index) => {
-        if (index > 0) {
-            const prevDate = new Date(filteredData[index - 1].Date);
-            prevDate.setMonth(prevDate.getMonth() - 1); // Subtract 1 month
-            return { x: prevDate, y: row['Start Risky Exp.'] }; // Use x/y for offsetting
-        } else {
-            return null; // Skip the first data point
-        }
-    }).filter(item => item !== null); // Remove the null (first) item
+    // Create arrays to hold the shifted CPPI and S&P 500 data with initial values
+    const shiftedCPPIData = [{ x: filteredData[0].Date, y: initialWealth }]; 
+    const shiftedSP500Data = [{ x: filteredData[0].Date, y: initialWealth }]; // Start S&P 500 with initialWealth
+
+    // Shift CPPI and S&P 500 data by one month
+    for (let i = 1; i < filteredData.length; i++) {
+        shiftedCPPIData.push({ x: filteredData[i].Date, y: filteredData[i - 1]['End Portfolio'] });
+        shiftedSP500Data.push({ x: filteredData[i].Date, y: filteredData[i - 1]['S&P 500 Value'] });
+    }
     
     const riskFreeRate = 0.028; // 2.8% per year
     const quarterlyRate = riskFreeRate / 4;
@@ -45,11 +44,11 @@ function prepareChartData(cppiData, selectedStartDate, selectedDuration) {
     });
 
     return {
-        labels: filteredData.map(row => row.Date),
+        labels: filteredData.map(row => row.Date), 
         datasets: [
             {
                 label: 'CPPI',
-                data: filteredData.map(row => row['End Portfolio']),
+                data: shiftedCPPIData, // Use the shifted CPPI data
                 borderColor: 'rgba(75, 192, 192, 1)',
                 //backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 pointRadius: 3,
@@ -57,7 +56,7 @@ function prepareChartData(cppiData, selectedStartDate, selectedDuration) {
             },
             {
                 label: 'S&P 500',
-                data: filteredData.map(row => row['S&P 500 Value']),
+                data: shiftedSP500Data, // Use the shifted S&P 500 data
                 borderColor: 'rgba(255, 99, 132, 1)',
                 //backgroundColor: 'rgba(255, 99, 132, 0.2)',
                 pointRadius: 3,
@@ -90,11 +89,11 @@ function prepareChartData(cppiData, selectedStartDate, selectedDuration) {
             },
             {
                 label: 'Risky Exposure',
-                data: shiftedRiskyExposureData, // Use the shifted data
+                data: filteredData.map(row => row['Start Risky Exp.']), // Use original risky exposure data
                 borderColor: 'grey', 
                 backgroundColor: 'rgba(128, 128, 128, 0.2)', // Light grey with transparency
                 pointRadius: 0,
-                borderWidth: 0, 
+                borderWidth: 0,
                 fill: true, 
                 borderDash: [2, 2], // Dotted line
             }
