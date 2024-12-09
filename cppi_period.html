@@ -14,7 +14,7 @@
         body {
             background-color: #121212;
             color: #ffffff;
-            font-family: 'Inter', sans-serif;
+            font-family: 'inter', sans-serif;
             margin: 0;
             padding: 0;
         }
@@ -172,6 +172,18 @@
     header .help-icon .material-icons {
         font-size: 1.2rem; /* Adjust the size as needed */
     }
+    .cagr-badge {
+  background-color: rgba(0, 0, 0, 0.1); /* Slightly visible background */
+}
+
+.bg-red-transparent {
+  background-color: rgba(255, 0, 0, 0.1); /* Semi-transparent red background */
+}
+
+.bg-green-transparent {
+  background-color: rgba(0, 255, 0, 0.1); /* Semi-transparent green background */
+}
+
     </style>
 </head>
 <body>
@@ -209,21 +221,57 @@
 
         <div class="grid grid-cols-3 gap-4 mb-4">
             <div class="bg-custom-dark rounded-lg shadow-lg p-4">
-                <h2 class="text-lg font-medium mb-2">CPPI</h2>
-                <p class="text-3xl font-bold" id="cppi-final-wealth">-</p>
-                <p class="text-sm" id="cppi-cagr">-</p>
+              <div class="flex items-center mb-2">
+                <span class="w-3 h-3 rounded-full bg-green-600 mr-2"></span>
+                <h2 class="text-lg font-medium">CPPI</h2>
+              </div>
+              <div class="flex flex-col items-start">
+                <div class="flex items-center w-full justify-start">
+                  <p class="text-3xl font-bold" id="cppi-final-wealth">-</p>
+                  <span class="inline-flex items-center ml-7 px-3 py-1 rounded-full text-sm font-medium text-gray-800 cagr-badge" id="cppi-cagr-badge">
+                    CAGR <span class="ml-2" id="cppi-cagr">-</span>
+                  </span>
+                </div>
+                <p class="text-sm text-gray-500">Final Wealth</p>
+              </div>
             </div>
             <div class="bg-custom-dark rounded-lg shadow-lg p-4">
-                <h2 class="text-lg font-medium mb-2">S&P 500</h2>
-                <p class="text-3xl font-bold" id="sp500-final-wealth">-</p>
-                <p class="text-sm" id="sp500-cagr">-</p>
+              <div class="flex items-center mb-2">
+                <span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span>
+                <h2 class="text-lg font-medium">S&P 500</h2>
+              </div>
+              <div class="flex flex-col items-start">
+                <div class="flex items-center w-full justify-start">
+                  <p class="text-3xl font-bold" id="sp500-final-wealth">-</p>
+                  <span class="inline-flex items-center ml-7 px-3 py-1 rounded-full text-sm font-medium text-gray-800 cagr-badge" id="sp500-cagr-badge">
+                    CAGR<span class="ml-2" id="sp500-cagr">-</span>
+                  </span>
+                </div>
+                <p class="text-sm text-gray-500">Final Wealth</p>
+              </div>
             </div>
             <div class="bg-custom-dark rounded-lg shadow-lg p-4">
-                <h2 class="text-lg font-medium mb-2">Risk-Free Rate</h2>
-                <p class="text-3xl font-bold" id="risk-free-final-wealth">-</p>
-                <p class="text-sm" id="risk-free-cagr">-</p>
+              <div class="flex items-center mb-2">
+                <span class="w-3 h-3 rounded-full bg-yellow-500 mr-2"></span>
+                <h2 class="text-lg font-medium">Risk-Free Rate</h2>
+              </div>
+              <div class="flex flex-col items-start">
+                <div class="flex items-center w-full justify-start">
+                  <p class="text-3xl font-bold" id="risk-free-final-wealth">-</p>
+                  <span class="inline-flex items-center ml-7 px-3 py-1 rounded-full text-sm font-medium text-gray-800 cagr-badge" id="risk-free-cagr-badge">
+                    CAGR<span class="ml-2" id="risk-free-cagr">-</span>
+                  </span>
+                </div>
+                <p class="text-sm text-gray-500">Final Wealth</p>
+              </div>
             </div>
-        </div>
+          </div>
+          
+          
+          
+          
+          
+
 
         <div class="bg-custom-dark rounded-lg shadow-lg p-4">
             <div id="chartContainer">

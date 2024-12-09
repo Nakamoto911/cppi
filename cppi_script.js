@@ -226,18 +226,34 @@ async function updateStats() {
     const cppiData = await fetchData();
     const selectedStartDate = document.getElementById('startDate').value;
     const selectedDuration = parseInt(document.getElementById('duration').value, 10);
-
+  
     const stats = await calculateStats(cppiData, selectedStartDate, selectedDuration);
-
+  
     if (stats) {
-        document.getElementById('cppi-final-wealth').textContent = stats.cppiFinalWealth;
-        document.getElementById('cppi-cagr').textContent = stats.cppiCAGR;
-        document.getElementById('sp500-final-wealth').textContent = stats.sp500FinalWealth;
-        document.getElementById('sp500-cagr').textContent = stats.sp500CAGR;
-        document.getElementById('risk-free-final-wealth').textContent = stats.riskFreeFinalWealth;
-        document.getElementById('risk-free-cagr').textContent = stats.riskFreeCAGR;
+      document.getElementById('cppi-final-wealth').textContent = stats.cppiFinalWealth;
+      document.getElementById('cppi-cagr').textContent = stats.cppiCAGR;
+      document.getElementById('sp500-final-wealth').textContent = stats.sp500FinalWealth;
+      document.getElementById('sp500-cagr').textContent = stats.sp500CAGR;
+      document.getElementById('risk-free-final-wealth').textContent = stats.riskFreeFinalWealth;
+      document.getElementById('risk-free-cagr').textContent = stats.riskFreeCAGR;
+  
+      // Update CAGR badges with color based on value
+      const cagrElements = ['cppi-cagr', 'sp500-cagr', 'risk-free-cagr'];
+      cagrElements.forEach(elementId => {
+        const cagrValue = parseFloat(document.getElementById(elementId).textContent);
+        const badgeElement = document.getElementById(elementId).parentElement;
+        if (cagrValue < 0) {
+          badgeElement.classList.remove('bg-green-transparent', 'text-green-500');
+          badgeElement.classList.add('bg-red-transparent', 'text-red-500');
+        } else {
+          badgeElement.classList.remove('bg-red-transparent', 'text-red-500');
+          badgeElement.classList.add('bg-green-transparent', 'text-green-500');
+        }
+      });
     }
-}
+  }
+  
+  
 
 async function updateTable(cppiData, selectedStartDate, selectedDuration) {
     const startDate = new Date(selectedStartDate);
