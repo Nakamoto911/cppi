@@ -176,15 +176,21 @@ async function initializeDashboard() {
                         boxWidth: 15
                     }
                 },
-                tooltip: { // Enhanced tooltips
+                tooltip: {
+                    position: 'nearest', // Set tooltip position to average
+                    intersect: false,
+                    mode: 'index',
                     callbacks: {
                         label: function(context) {
+                            if (context.dataset.label === 'Initial Wealth' || context.dataset.label === '0% Return') {
+                                return null; // Don't show a tooltip for this dataset
+                            }
+                
                             let label = context.dataset.label || '';
                             if (label) {
                                 label += ': ';
                             }
                             if (context.parsed.y !== null) {
-                                // Format values as percentages for CAGR and Volatility
                                 if (cagrTab.classList.contains('active') || volatilityTab.classList.contains('active')) {
                                     label += context.parsed.y.toFixed(2) + '%';
                                 } else {
@@ -199,9 +205,76 @@ async function initializeDashboard() {
                         }
                     }
                 }
-            }
-        }
+            },
+            events: ['mousemove', 'mouseout', 'touchstart', 'touchmove'], // Ensure touch events are included
+        },
     });
+
+    let hoveredIndex = null; // Store the current hovered x-axis index
+
+    // Plugin for drawing the vertical dashed line
+    const verticalLinePlugin = {
+        id: 'verticalLine',
+        afterDatasetsDraw(chart) {
+            if (hoveredIndex !== null) {
+                const ctx = chart.ctx;
+                const xScale = chart.scales.x;
+                const xPosition = xScale.getPixelForValue(hoveredIndex);
+    
+                ctx.save();
+                ctx.beginPath();
+                ctx.setLineDash([5, 5]); // Set dashed line style
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)'; // Light white line
+                ctx.lineWidth = 1;
+    
+                // Draw the vertical line
+                ctx.moveTo(xPosition, chart.chartArea.top);
+                ctx.lineTo(xPosition, chart.chartArea.bottom);
+                ctx.stroke();
+                ctx.restore();
+            }
+        },
+    };
+    
+    // Add the plugin to Chart.js
+    Chart.register(verticalLinePlugin);
+    
+    // Update `onHover` to handle vertical line and points
+    chart.options.onHover = (event) => {
+        const xPosition = event.native.offsetX;
+        const xScale = chart.scales.x;
+        hoveredIndex = xScale.getValueForPixel(xPosition);
+    
+        chart.data.datasets.forEach((dataset, datasetIndex) => {
+            if (datasetIndex !== 2) { // Skip "Initial Wealth" or datasets not needing interaction
+                dataset.pointRadius = dataset.data.map((_, index) => (index === hoveredIndex ? 3 : 0));
+                dataset.pointBackgroundColor = dataset.data.map((_, index) =>
+                    index === hoveredIndex ? dataset.borderColor : 'rgba(0, 0, 0, 0)'
+                );
+            }
+        });
+    
+        chart.update('none'); // Update the chart without animation
+    };
+    
+    // Clear hoveredIndex when the mouse leaves the chart
+    chart.options.onLeave = () => {
+        hoveredIndex = null;
+        chart.data.datasets.forEach((dataset) => {
+            dataset.pointRadius = dataset.data.map(() => 0);
+            dataset.pointBackgroundColor = dataset.data.map(() => 'rgba(0, 0, 0, 0)');
+        });
+        chart.update('none');
+    };
+
+    chart.options.onTouch = (event, elements) => {
+        chart.data.datasets.forEach((dataset, index) => {
+            if (index !== 2) { //Except Initial Wealth
+                dataset.pointRadius = dataset.data.map((_, i) => (elements.length > 0 && i === elements[0].index) ? 3 : 0);
+            }
+        });
+        chart.update();
+    };
 
     function median(values) {
         if (values.length === 0) return 0;
